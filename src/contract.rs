@@ -19,6 +19,7 @@ pub fn instantiate(
         count: msg.count,
         owner: info.sender,
     };
+    // Set owner (XXX: see try_reset)
     STATE.save(deps.storage, &state)?;
 
     Ok(Response::default())
@@ -49,6 +50,8 @@ pub fn try_increment(deps: DepsMut) -> Result<Response, ContractError> {
 
 pub fn try_reset(deps: DepsMut, info: MessageInfo, count: i32) -> Result<Response, ContractError> {
     STATE.update(deps.storage, |mut state| -> Result<_, ContractError> {
+        // XXX: Permissions check
+        // (this commit doesn't seem to require conversion from canonical address)
         if info.sender != state.owner {
             return Err(ContractError::Unauthorized {});
         }
